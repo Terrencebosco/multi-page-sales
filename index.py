@@ -12,22 +12,48 @@ import dash_bootstrap_components as dbc
 from apps import revenue
 from apps import test ###############
 from apps import yearly
+
 # read in the app and server from the app file
 from app import app
 from app import server
 
 # read in the pages from the apps folder
 
+## old navbar ##
+# app.layout = html.Div([
+#     html.Div([
+#         dcc.Link('yearly|', href='/apps/yearly'),
+#         dcc.Link('revenue|', href='/apps/revenue'),
+#         dcc.Link('test|', href='/apps/test'), #################
+#     ], className="row"),
+#     dcc.Location(id='url', refresh=False),
+#     html.Div(id='page-content', children=[])
+# ])
 
-app.layout = html.Div([
-    html.Div([
-        dcc.Link('yearly|', href='/apps/yearly'),
-        dcc.Link('revenue|', href='/apps/revenue'),
-        dcc.Link('test|', href='/apps/test') #################
-    ], className="row"),
-    dcc.Location(id='url', refresh=False),
-    html.Div(id='page-content', children=[])
-])
+navbar = dbc.NavbarSimple(
+    children=[
+        dbc.NavItem(dbc.NavLink("Home", href="/apps/test")),
+        dbc.DropdownMenu(
+            children=[
+                dbc.DropdownMenuItem("More pages", header=True),
+                dbc.DropdownMenuItem("yearly", href="/apps/yearly"),
+                dbc.DropdownMenuItem("revenue", href="/apps/revenue"),
+                dbc.DropdownMenuItem("test", href="/apps/test"),
+            ],
+            nav=True,
+            in_navbar=True,
+            label="More",
+        ),
+    ],
+    brand="Sales Data Analysis",
+    brand_href="#",
+    color="primary",
+    dark=True,
+)
+
+content = html.Div(id="page-content", className="content")
+
+app.layout = html.Div([dcc.Location(id="url"), navbar, content])
 
 @app.callback(Output(component_id='page-content', component_property='children'),
               [Input(component_id='url', component_property='pathname')])
@@ -39,7 +65,7 @@ def display_page(pathname):
     if pathname == '/apps/test': #############
         return test.layout        #############
     else:
-        return revenue.layout
+        return yearly.layout
 
 if __name__ == '__main__':
     app.run_server(debug=True)
@@ -50,3 +76,4 @@ if __name__ == '__main__':
 # get 2 plots on one row
 # why did the import work after i tried it?
 # make a home page dash board then other pages are more in depth
+# More analysis

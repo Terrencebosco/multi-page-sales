@@ -38,19 +38,19 @@ layout = dbc.Container([
 
             dbc.Col([
 
-            dcc.Checklist(id='year2', value=[2018,2019,2020],
-                          options=[{'label':x, 'value':x}
-                                   for x in sorted(month_year_group['year'].unique())],
-                          labelClassName="mr-3"),
+                dcc.Checklist(id='year2', value=[2018,2019,2020],
+                            options=[{'label':x, 'value':x}
+                                    for x in sorted(month_year_group['year'].unique())],
+                            labelClassName="mr-3"),
 
-            dcc.Graph(id='month_year', figure={})],
+                dcc.Graph(id='month_year', figure={})],
+                xs=12, sm=12, md=12, lg=6, xl=6
+                    ),
+
+            dbc.Col([
+            dcc.Graph(id='customer_type', figure={})],
             xs=12, sm=12, md=12, lg=6, xl=6
-                ),
-
-            # dbc.Col([
-            # dcc.Graph(id='customer_type', figure={})],
-            # xs=12, sm=12, md=12, lg=6, xl=6
-            #     )
+                )
     ]),
 ])
 @app.callback(

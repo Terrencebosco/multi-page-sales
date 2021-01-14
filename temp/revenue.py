@@ -27,37 +27,29 @@ months = ['January','February','March','April','May','June'
 month_year_group = df.groupby(['year','month_name'])['sales_amount'].sum()
 month_year_group = month_year_group.reindex(months, level='month_name').reset_index()
 
-layout= dbc.Container([
-    dbc.Row([
-        dbc.Col([
+layout = html.Div([
+    html.Div([
+        # html.Pre(children="Payment type", style={"fontSize":"150%"}),
+        html.Div([
             dcc.Dropdown(
                 id='year',
-                options=[{'label':x, 'value':x}
-                                   for x in sorted(month_year_group['year'].unique())],
-                multi=False,
                 value=2020,
-                style={'width':'50%'}
-                ),
+                options=[{'label':x, 'value':x}
+                                    for x in sorted(month_year_group['year'].unique())],
+                multi=False,
+            )], className='six columns')
 
-                dcc.Graph(id='revenue', figure={})],
-                xs=12, sm=12, md=12, lg=6, xl=6,
-                ),
+    ], className='row'),
 
-        dbc.Col([
-            dcc.Graph(id='test', figure={})],
-            xs=12, sm=12, md=12, lg=6, xl=6
-                )
-    ])
-])
+    dcc.Graph(id='revenue', figure={}),
+    dcc.Graph(id='test', figure={}),
+], className='six columns')
 
 @app.callback(
-    # outputs 1
-    Output('revenue','figure'),
-    # input from user
-    Input('year', 'value')
+    Output(component_id='revenue', component_property='figure'),
+    Input(component_id='year', component_property='value')
 )
-
-def update_graph(option_selected):
+def display_value(option_selected):
 
     dff = df.copy()
     dff = dff[dff['year']== option_selected]
@@ -71,3 +63,6 @@ def update_graph(option_selected):
     fig.update_traces(textposition='inside', textinfo='percent+label')
 
     return fig
+
+# if __name__ == '__main__':
+#     app.run_server(debug=True)
