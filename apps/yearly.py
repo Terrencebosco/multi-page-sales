@@ -44,13 +44,13 @@ layout = dbc.Container([
                             labelClassName="mr-3"),
 
                 dcc.Graph(id='month_year', figure={})],
-                xs=12, sm=12, md=12, lg=6, xl=6
+                xs=12, sm=12, md=12, lg=12, xl=12
                     ),
 
-            dbc.Col([
-            dcc.Graph(id='customer_type', figure={})],
-            xs=12, sm=12, md=12, lg=6, xl=6
-                )
+            # dbc.Col([
+            #     dcc.Graph(id='customer_type', figure={})],
+            #     xs=12, sm=12, md=12, lg=6, xl=6
+            #     )
     ]),
 ])
 @app.callback(

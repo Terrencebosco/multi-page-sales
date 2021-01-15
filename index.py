@@ -12,7 +12,7 @@ import dash_bootstrap_components as dbc
 from apps import revenue
 from apps import test ###############
 from apps import yearly
-
+from apps import market_product
 # read in the app and server from the app file
 from app import app
 from app import server
@@ -39,6 +39,7 @@ navbar = dbc.NavbarSimple(
                 dbc.DropdownMenuItem("yearly", href="/apps/yearly"),
                 dbc.DropdownMenuItem("revenue", href="/apps/revenue"),
                 dbc.DropdownMenuItem("test", href="/apps/test"),
+                dbc.DropdownMenuItem("market products", href="/apps/market_product")
             ],
             nav=True,
             in_navbar=True,
@@ -62,6 +63,8 @@ def display_page(pathname):
         return yearly.layout
     if pathname == '/apps/revenue':
         return revenue.layout
+    if pathname == '/apps/market_product':
+        return market_product.layout
     if pathname == '/apps/test': #############
         return test.layout        #############
     else:
