@@ -1,35 +1,29 @@
+# analysis tools
 import pandas as pd
 import numpy as np
+
+# plotting
 import plotly.express as px
 import plotly.graph_objects as go
 
+# dash components
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 
+# pages from apps folder
 from apps import revenue
 from apps import test ###############
 from apps import yearly
 from apps import market_product
+
 # read in the app and server from the app file
 from app import app
 from app import server
 
-# read in the pages from the apps folder
-
-## old navbar ##
-# app.layout = html.Div([
-#     html.Div([
-#         dcc.Link('yearly|', href='/apps/yearly'),
-#         dcc.Link('revenue|', href='/apps/revenue'),
-#         dcc.Link('test|', href='/apps/test'), #################
-#     ], className="row"),
-#     dcc.Location(id='url', refresh=False),
-#     html.Div(id='page-content', children=[])
-# ])
-
+# create a header with drop down of the pages
 navbar = dbc.NavbarSimple(
     children=[
         dbc.NavItem(dbc.NavLink("Home", href="/apps/test")),
@@ -52,10 +46,13 @@ navbar = dbc.NavbarSimple(
     dark=True,
 )
 
+# creating the content from the page selected
 content = html.Div(id="page-content", className="content")
 
+# gaining access to the layout of each page via selection
 app.layout = html.Div([dcc.Location(id="url"), navbar, content])
 
+# call back for specific page selected
 @app.callback(Output(component_id='page-content', component_property='children'),
               [Input(component_id='url', component_property='pathname')])
 def display_page(pathname):
@@ -68,8 +65,9 @@ def display_page(pathname):
     if pathname == '/apps/test': #############
         return test.layout        #############
     else:
-        return yearly.layout
+        return test.layout
 
+# run application: host file
 if __name__ == '__main__':
     app.run_server(debug=True)
 

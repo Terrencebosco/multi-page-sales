@@ -5,7 +5,7 @@
 run application:
 `https://tb-dash.herokuapp.com/` : single page dash
 
-`tba` :muli page
+`https://tb-mdash.herokuapp.com/` :multiple page
 
 ### tools that helped:
 * https://dash-bootstrap-components.opensource.faculty.ai/docs
@@ -95,3 +95,4 @@ TODO:
 - Visual
 - ~~plotyl dash?~~
 - look into making plots by yearly distrobution
+- pages by type
