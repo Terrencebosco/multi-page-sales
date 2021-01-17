@@ -78,3 +78,4 @@ if __name__ == '__main__':
 # why did the import work after i tried it?
 # make a home page dash board then other pages are more in depth
 # More analysis
+# figure out how to handle no selection for check box on yearly line plot
