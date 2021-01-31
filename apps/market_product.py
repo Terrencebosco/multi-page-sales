@@ -43,7 +43,7 @@ layout = dbc.Container([
 
             dcc.Input(
                 id='look_at',
-                placeholder='Value between 0 and 259',
+                placeholder='Value between 0 and total number of products',
                 type='number',
                 value=5,
                 min=0,
@@ -79,10 +79,12 @@ layout = dbc.Container([
 )
 
 def update_graph(year, look_at, market):
-
+    #checks for error in number to look at feild ets to 0 to by pass error.
+    if (look_at == 0):
+        look_at = None
     # data query
     dff = df.query(f'year=={year}')
-    total_products = total_products = len(dff[dff['markets_name']==market]['product_code'].unique())
+    total_products = len(dff[dff['markets_name']==market]['product_code'].unique())
 
     temp = dff[dff['markets_name']==market]['product_code'].value_counts().head(look_at)
     fig = px.bar(temp, y=temp.values, x=temp.index,
@@ -102,6 +104,10 @@ def update_graph(year, look_at, market):
 
     #data
     dff = df.query(f'year=={year}')
+
+    #checks for error in number to look at feild ets to 0 to by pass error.
+    if (look_at == None):
+        look_at = 0
 
     # get n out of total to show percent of total
     total = len(dff['product_code'].unique())
