@@ -76,15 +76,58 @@ layout = dbc.Container([
         )
 
     ], align='center'),
-])
 
+    dbc.Row([
+        dbc.Col([
+              dcc.Input(
+                id='look_at2',
+                placeholder='Value between 0 and 259',
+                type='number',
+                value=3,
+                min=0,
+                max=259
+                ),
+
+            dcc.Graph(id='market_sales', figure={})],
+            xs=12, sm=12, md=12, lg=6, xl=6
+                ),
+
+        # bar: year breakdown revenue by product to show num slected as % of total
+        dbc.Col([
+            dcc.Graph(id='market_sales_pie', figure={})],
+            xs=12, sm=12, md=12, lg=6, xl=6
+        )
+        ]),
+
+    dbc.Row([
+        dbc.Col([
+              dcc.Input(
+                id='look_at3',
+                placeholder='Value between 0 and 259',
+                type='number',
+                value=3,
+                min=0,
+                max=259
+                ),
+
+            dcc.Graph(id='customer_sales', figure={})],
+            xs=12, sm=12, md=12, lg=6, xl=6
+                ),
+
+        # bar: year breakdown revenue by product to show num slected as % of total
+        dbc.Col([
+            dcc.Graph(id='customer_sales_pie', figure={})],
+            xs=12, sm=12, md=12, lg=6, xl=6
+        )
+        ])
+    ])
 
 @app.callback(
     Output('month_year', 'figure'),
     Input('year', 'value')
 )
 
-# line graph
+# line graph for revenue
 def update_graph(year):
     temp = month_year_group[month_year_group['year'].isin(year)]
     fig = px.line(temp, x="month_name", y='sales_amount', color='year')
@@ -93,14 +136,13 @@ def update_graph(year):
     return fig
 
 
-
 @app.callback(
         Output('product_sales','figure'),
         [Input('year', 'value'),
         Input('look_at', 'value')]
 )
 
-# bar Graph
+# bar Graph for product
 def update_graph(year, look_at):
 
     if year == []:
@@ -125,7 +167,7 @@ def update_graph(year, look_at):
     Input('look_at', 'value')]
 )
 
-# pie graph
+# pie graph for product
 def update_graph(year, look_at):
 
     #error supression
@@ -162,6 +204,139 @@ def update_graph(year, look_at):
         }
     )
 
+    return fig
+
+###########################
+######### row two #########
+###########################
+
+@app.callback(
+    Output('market_sales','figure'),
+    [Input('year', 'value'),
+    Input('look_at2', 'value')]
+)
+
+# bar Graph for markets
+def update_graph(year, look_at2):
+
+    if year == []:
+        year = None
+    year_to_string = "".join(str(year)).strip("[]")
+    temp = df[df['year'].isin(year)]
+    product_group = temp.groupby('markets_code')['sales_amount'] \
+    .sum().reset_index().sort_values('sales_amount',ascending=False)[:look_at2]
+
+    fig = px.bar(
+        product_group,
+        y='sales_amount',
+        x='markets_code',
+        title=f'Top {look_at2} highest earning Markets for year/s {year_to_string}')
+
+    return fig
+
+
+@app.callback(
+    Output('market_sales_pie','figure'),
+    [Input('year', 'value'),
+    Input('look_at2', 'value')]
+)
+
+# pie graph for markets
+def update_graph(year, look_at2):
+    #error supression
+    if look_at2 == None:
+        look_at2 = 0
+
+    temp = df[df['year'].isin(year)]
+    product_group = temp.groupby('markets_code')['sales_amount'].sum().reset_index() \
+    .sort_values('sales_amount',ascending=False)
+
+    percent_of_look_at =round(sum(product_group['sales_amount'][:look_at2]) \
+    /sum(product_group['sales_amount'])*100,2)
+
+    year_to_string = "".join(str(year)).strip("[]")
+
+    total = len(temp['markets_code'].unique())
+    zeros = np.zeros(total)
+    pull = [.1] * look_at2
+    test = list(np.concatenate([pull, zeros[look_at2:]]))
+
+    explode = len(product_group['markets_code'].unique())
+
+    fig = go.Figure(data=[go.Pie(labels=product_group['markets_code'], values=product_group['sales_amount'], pull=test)])
+    fig.update_traces(textposition='inside', textinfo='percent+label'),
+    fig.update_layout(
+        title={
+            'text':f'''Top {look_at2} make up {percent_of_look_at}% of all revenue for year/s {year_to_string}'''
+        }
+    )
+    return fig
+
+###########################
+######## row three ########
+###########################
+
+
+@app.callback(
+    Output('customer_sales','figure'),
+    [Input('year', 'value'),
+    Input('look_at3', 'value')]
+)
+
+# bar Graph for customers
+def update_graph(year, look_at2):
+
+    if year == []:
+        year = None
+    year_to_string = "".join(str(year)).strip("[]")
+    temp = df[df['year'].isin(year)]
+    product_group = temp.groupby('customer_code')['sales_amount'] \
+    .sum().reset_index().sort_values('sales_amount',ascending=False)[:look_at2]
+
+    fig = px.bar(
+        product_group,
+        y='sales_amount',
+        x='customer_code',
+        title=f'Top {look_at2} highest earning Customers for year/s {year_to_string}')
+
+    return fig
+
+
+@app.callback(
+    Output('customer_sales_pie','figure'),
+    [Input('year', 'value'),
+    Input('look_at3', 'value')]
+)
+
+# pie graph for customers
+def update_graph(year, look_at3):
+    #error supression
+    if look_at3 == None:
+        look_at3 = 0
+
+    temp = df[df['year'].isin(year)]
+    product_group = temp.groupby('customer_code')['sales_amount'].sum().reset_index() \
+    .sort_values('sales_amount',ascending=False)
+
+    percent_of_look_at =round(sum(product_group['sales_amount'][:look_at3]) \
+    /sum(product_group['sales_amount'])*100,2)
+
+    year_to_string = "".join(str(year)).strip("[]")
+
+    total = len(temp['customer_code'].unique())
+    zeros = np.zeros(total)
+    pull = [.1] * look_at3
+    test = list(np.concatenate([pull, zeros[look_at3:]]))
+
+    explode = len(product_group['customer_code'].unique())
+
+    fig = go.Figure(data=[go.Pie(labels=product_group['customer_code'], values=product_group['sales_amount'], pull=test)])
+    fig.update_traces(textposition='inside', textinfo='percent+label'),
+    fig.update_layout(
+        title={
+            'text':f'''Top {look_at3} make up {percent_of_look_at}% of all revenue for year/s {year_to_string}'''
+        }
+    )
     return fig
 
     # TODO

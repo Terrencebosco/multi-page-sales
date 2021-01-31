@@ -65,7 +65,7 @@ def display_page(pathname):
     if pathname == '/apps/test': #############
         return test.layout        #############
     else:
-        return test.layout
+        return yearly.layout
 
 # run application: host file
 if __name__ == '__main__':

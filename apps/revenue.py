@@ -19,7 +19,6 @@ DATA_PATH = PATH.joinpath("../datasets").resolve()
 df = pd.read_csv(DATA_PATH.joinpath("db_csv.csv"))
 df = df[df['year']!=2017]
 
-
 # do this in the callback, why be global??
 months = ['January','February','March','April','May','June'
         ,'July','August','September','October','November','December']
