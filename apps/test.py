@@ -1,57 +1,74 @@
+import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
+import dash_bootstrap_components as dbc
+
 import plotly.express as px
 import pandas as pd
 import pathlib
+
+# the problem child
 from app import app
 
-# get relative data folder
+# read in csv from datasets folder.
 PATH = pathlib.Path(__file__).parent
 DATA_PATH = PATH.joinpath("../datasets").resolve()
 
-# owner: shivp Kaggle. Source: https://data.mendeley.com/datasets
-# dataset was modified. Original data: https://www.kaggle.com/shivkp/customer-behaviour
-dfg = pd.read_csv(DATA_PATH.joinpath("opsales.csv"))
+#specific data
+df = pd.read_csv(DATA_PATH.joinpath("db_csv.csv"))
+df = df[df['year']!=2017]
 
-layout = html.Div([
-    html.H1('General Product Sales', style={"textAlign": "center"}),
+geojson = ps.read_csv(DATA_PATH.joinpath("states_india.geojson"))
 
-    html.Div([
-        html.Div([
-            html.Pre(children="Payment type", style={"fontSize":"150%"}),
+# do this in the callback, why be global??
+months = ['January','February','March','April','May','June'
+        ,'July','August','September','October','November','December']
+
+month_year_group = df.groupby(['year','month_name'])['sales_amount'].sum()
+month_year_group = month_year_group.reindex(months, level='month_name').reset_index()
+
+layout= dbc.Container([
+    dbc.Row([
+        dbc.Col([
             dcc.Dropdown(
-                id='pymnt-dropdown', value='DEBIT', clearable=False,
-                persistence=True, persistence_type='session',
-                options=[{'label': x, 'value': x} for x in sorted(dfg["Type"].unique())]
-            )
-        ], className='six columns'),
+                id='year',
+                options=[{'label':x, 'value':x}
+                                   for x in sorted(month_year_group['year'].unique())],
+                multi=False,
+                value=2020,
+                style={'width':'50%'}
+                ),
 
-        html.Div([
-            html.Pre(children="Country of destination", style={"fontSize": "150%"}),
-            dcc.Dropdown(
-                id='country-dropdown', value='India', clearable=False,
-                persistence=True, persistence_type='local',
-                options=[{'label': x, 'value': x} for x in sorted(dfg["Order Country"].unique())]
-            )
-            ], className='six columns'),
-    ], className='row'),
+                dcc.Graph(id='revenue', figure={})],
+                xs=12, sm=12, md=12, lg=6, xl=6,
+                ),
 
-    dcc.Graph(id='my-map', figure={}),
+        dbc.Col([
+            dcc.Graph(id='test', figure={})],
+            xs=12, sm=12, md=12, lg=6, xl=6
+                )
+    ])
 ])
 
-
 @app.callback(
-    Output(component_id='my-map', component_property='figure'),
-    [Input(component_id='pymnt-dropdown', component_property='value'),
-     Input(component_id='country-dropdown', component_property='value')]
+    # outputs 1
+    Output('revenue','figure'),
+    # input from user
+    Input('year', 'value')
 )
-def display_value(pymnt_chosen, country_chosen):
-    dfg_fltrd = dfg[(dfg['Order Country'] == country_chosen) &
-                    (dfg["Type"] == pymnt_chosen)]
-    dfg_fltrd = dfg_fltrd.groupby(["Customer State"])[['Sales']].sum()
-    dfg_fltrd.reset_index(inplace=True)
-    fig = px.choropleth(dfg_fltrd, locations="Customer State",
-                        locationmode="USA-states", color="Sales",
-                        scope="usa")
+
+def update_graph(option_selected):
+
+    dff = df.copy()
+    dff = dff[dff['year']== option_selected]
+
+    fig = px.pie(
+        dff,
+        values='sales_amount',
+        names='markets_name',
+        title=f'revenue by market for year {option_selected}',
+        )
+    fig.update_traces(textposition='inside', textinfo='percent+label')
+
     return fig
