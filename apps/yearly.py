@@ -21,9 +21,11 @@ months = ['January','February','March','April','May','June'
 PATH = pathlib.Path(__file__).parent
 DATA_PATH = PATH.joinpath("../datasets").resolve()
 
-#specific data
-df = pd.read_csv(DATA_PATH.joinpath("db_csv.csv"))
-df = df[df['year']!=2017]
+# #specific data
+# df = pd.read_csv(DATA_PATH.joinpath("db_csv.csv"))
+# df = df[df['year']!=2017]
+
+df = pd.read_csv(DATA_PATH.joinpath("updated_data.csv"))
 
 month_year_group = df.groupby(['year','month_name'])['sales_amount'].sum()
 month_year_group = month_year_group.reindex(months, level='month_name').reset_index()

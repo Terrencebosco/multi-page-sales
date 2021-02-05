@@ -15,9 +15,11 @@ from app import app
 PATH = pathlib.Path(__file__).parent
 DATA_PATH = PATH.joinpath("../datasets").resolve()
 
-#specific data
-df = pd.read_csv(DATA_PATH.joinpath("db_csv.csv"))
-df = df[df['year']!=2017]
+# #specific data
+# df = pd.read_csv(DATA_PATH.joinpath("db_csv.csv"))
+# df = df[df['year']!=2017]
+
+df = pd.read_csv(DATA_PATH.joinpath("updated_data.csv"))
 
 # do this in the callback, why be global??
 months = ['January','February','March','April','May','June'
