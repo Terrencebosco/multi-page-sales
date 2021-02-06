@@ -21,6 +21,13 @@ df = pd.read_csv(DATA_PATH.joinpath("updated_data.csv"))
 
 month_year_group = pd.read_csv(DATA_PATH.joinpath("year_sales_group.csv"))
 
+styles = {
+    'pre': {
+        'border': 'thin lightgrey solid',
+        'overflowX': 'scroll'
+    }
+}
+
 #load in new geo_json
 with open('datasets/data.json') as f:
     india_geojson = json.load(f)
@@ -36,17 +43,26 @@ layout= dbc.Container([
                 dcc.Graph(id='geo', figure={})],
                 xs=12, sm=12, md=12, lg=12, xl=12,
                 ),
+        dbc.Col([
+                dcc.Graph(id='test', figure={})],
+                xs=12, sm=12, md=12, lg=12, xl=12,
+                ),
+
+        # click json object store location.
+        dbc.Col([
+            dcc.Store(id='click-data',storage_type='session') #style=styles['pre']),
+        ])
+
     ])
 ])
 
 @app.callback(
-    # outputs 1
-    Output('geo','figure'),
-    # input from user
-    Input('year', 'value')
+    #store click, output and input
+    [Output('geo','figure'),Output('click-data', 'children')],
+    [Input('year', 'value'), Input('geo', 'clickData')]
 )
 
-def update_graph(values):
+def update_graph(values, clickData):
     temp = df[df['year'].isin(values)]
 
     t = temp.groupby(['state_code', 'markets_list', 'state'])['sales_amount'].sum()
@@ -59,8 +75,36 @@ def update_graph(values):
             color='sales_amount',
             color_continuous_scale='bugn',
             center={"lat": 20, "lon": 77},
-            hover_data=['state'],
+            hover_data=['state', 'markets_list'],
             zoom=3,
             opacity=1)
+
+    # clickable graph
+    fig.update_layout(clickmode='event+select')
+
+    # we are storing the "click data" into a json string object to itter later.
+    return fig , json.dumps(clickData, indent=2)
+
+
+# read in stored data from json object.. see above in layout.
+@app.callback(
+    Output('test', 'figure'),
+    [Input('year', 'value') ,Input('geo', 'clickData')])
+def display_click_data(year, clickData):
+
+    temp = df[df['year'].isin(year)]
+
+    product_group = temp.groupby(['product_code', 'id'])['sales_amount'].sum().reset_index() \
+    .sort_values('sales_amount',ascending=False)
+
+    # if click data is non return all data for country
+    if clickData != None:
+        l = clickData['points'][0]['location']
+        product_group = product_group[product_group['id']==l]
+        fig = px.bar(product_group, y='sales_amount', x='product_code')
+    else:
+        fig = px.bar(product_group, y='sales_amount', x='product_code')
+
     return fig
 
+# --------------------------------------------------------------------------------------------------------------------------------------------------- 
