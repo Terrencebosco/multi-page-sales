@@ -4,7 +4,9 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 import json
+import dash_table
 
+import plotly.graph_objects as go
 import plotly.express as px
 import pandas as pd
 import pathlib
@@ -35,14 +37,23 @@ with open('datasets/data.json') as f:
 layout= dbc.Container([
     dbc.Row([
         dbc.Col([
-           dcc.Checklist(id='year', value=[2020,2019,2018],
+            dcc.Checklist(id='year', value=[2020,2019,2018],
                           options=[{'label':x, 'value':x}
                                    for x in sorted(month_year_group['year'].unique())],
                           labelClassName="mr-3"),
 
+                # geo?
                 dcc.Graph(id='geo', figure={})],
                 xs=12, sm=12, md=12, lg=12, xl=12,
                 ),
+
+        # customer names and sales amount
+        dbc.Col([
+                dcc.Graph(id='customer_list', figure={})],
+                xs=12, sm=12, md=12, lg=12, xl=12,
+                ),
+
+        # bar
         dbc.Col([
                 dcc.Graph(id='test', figure={})],
                 xs=12, sm=12, md=12, lg=12, xl=12,
@@ -50,7 +61,7 @@ layout= dbc.Container([
 
         # click json object store location.
         dbc.Col([
-            dcc.Store(id='click-data',storage_type='session') #style=styles['pre']),
+            dcc.Store(id='click-data',storage_type='session')
         ])
 
     ])
@@ -108,3 +119,39 @@ def display_click_data(year, clickData):
     return fig
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------- 
+
+@app.callback(
+    Output('customer_list', 'figure'),
+    [Input('year', 'value') ,Input('geo', 'clickData')])
+
+def update_graph(year, clickData):
+    temp = df[df['year'].isin(year)]
+
+    product_group = temp.groupby(['custmer_name', 'markets_name', 'state', 'id'])['sales_amount'].sum().reset_index() \
+    .sort_values('sales_amount',ascending=False)
+
+    # if click data is non return all data for country
+    if clickData != None:
+        l = clickData['points'][0]['location']
+        product_group = product_group[product_group['id']==l]
+
+        fig = go.Figure(data=[go.Table(
+            header=dict(values=list(product_group.columns),
+                        fill_color='paleturquoise',
+                        align='left'),
+            cells=dict(values=[product_group.custmer_name, product_group.markets_name, product_group.state, \
+                                product_group.id, product_group.sales_amount],
+                    fill_color='lavender',
+                    align='left'))
+                ])
+    else:
+        fig = go.Figure(data=[go.Table(
+            header=dict(values=list(product_group.columns),
+                        fill_color='paleturquoise',
+                        align='left'),
+            cells=dict(values=[product_group.custmer_name, product_group.markets_name, product_group.state, \
+                                product_group.id, product_group.sales_amount],
+                    fill_color='lavender',
+                    align='left'))
+                ])
+    return fig
