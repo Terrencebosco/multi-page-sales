@@ -14,7 +14,7 @@ from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 
 # pages from apps folder
-from apps import revenue
+from apps import stateBreakdown
 from apps import test ###############
 from apps import yearly
 from apps import market_product
@@ -30,8 +30,8 @@ navbar = dbc.NavbarSimple(
         dbc.DropdownMenu(
             children=[
                 dbc.DropdownMenuItem("More pages", header=True),
-                dbc.DropdownMenuItem("yearly", href="/apps/yearly"),
-                dbc.DropdownMenuItem("revenue", href="/apps/revenue"),
+                dbc.DropdownMenuItem("Yearly", href="/apps/yearly"),
+                dbc.DropdownMenuItem("State Breakdown", href="/apps/stateBreakdown"),
                 dbc.DropdownMenuItem("test", href="/apps/test"),
                 dbc.DropdownMenuItem("market products", href="/apps/market_product")
             ],
@@ -58,8 +58,8 @@ app.layout = html.Div([dcc.Location(id="url"), navbar, content])
 def display_page(pathname):
     if pathname == '/apps/yearly':
         return yearly.layout
-    if pathname == '/apps/revenue':
-        return revenue.layout
+    if pathname == '/apps/stateBreakdown':
+        return stateBreakdown.layout
     if pathname == '/apps/market_product':
         return market_product.layout
     if pathname == '/apps/test': #############
