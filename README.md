@@ -81,7 +81,28 @@ pushing to heroku as follows:
 also created allies script to add commi and push to with git `git cmp "comment"`
 
 
+```
+docker build -t <image name>:latest .
 
+docker run -it <image name>
+
+docker stop <container id>
+
+run flask app from local container:
+    docker run -d -p 5000:5000 <image name>
+make new app and push image to heroku:
+
+heroku create <app name>
+
+heroku container:push web --app <app name>
+
+heroku container:release web --app <app name>
+can update image with
+
+heroku container:push web --app <app name>
+
+heroku container:release web --app <app name>
+```
 
 
 
