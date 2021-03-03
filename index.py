@@ -23,6 +23,11 @@ from apps import market_product
 from app import app
 from app import server
 
+from os import getenv
+
+# get port number of server.
+port = int(getenv("PORT", 5000))
+
 # create a header with drop down of the pages
 navbar = dbc.NavbarSimple(
     children=[
@@ -69,7 +74,7 @@ def display_page(pathname):
 
 # run application: host file
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(host="0.0.0.0", port=port)
 
 
 # TODO:

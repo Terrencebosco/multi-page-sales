@@ -184,7 +184,6 @@ def update_graph(year, clickData):
 
         fig = go.Figure(data=[go.Pie(labels=product_group['customer_type'], values=product_group['sales_amount'], pull=.05)])
         fig.update_traces(textposition='inside', textinfo='percent+label')
-        print(l)
 
     else:
         fig = go.Figure(data=[go.Pie(labels=product_group['customer_type'], values=product_group['sales_amount'], pull=.05)])
@@ -210,7 +209,6 @@ def update_graph(year, clickData):
 
         fig = go.Figure(data=[go.Pie(labels=product_group['custmer_name'], values=product_group['sales_amount'], pull=.05)])
         fig.update_traces(textposition='inside', textinfo='percent+label')
-        print(l)
 
     else:
         fig = go.Figure(data=[go.Pie(labels=product_group['custmer_name'], values=product_group['sales_amount'])])
