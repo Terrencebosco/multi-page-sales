@@ -35,6 +35,22 @@ with open('datasets/data.json') as f:
     india_geojson = json.load(f)
 
 layout= dbc.Container([
+
+       dbc.Row([
+            dbc.Col(html.H1("Sales Breakdown by Indian State",
+            style={'text-align':'center'},
+            className='mb-5'),width=12),
+
+            dbc.Col(html.P('''
+            A breakdown of the sales data by each Indian state.
+
+            Select state on map to see data for that state. By default data is
+            based on entire country.
+            ''',
+            style={'text-align':'left'},
+            className='mb-5'),width=6)
+    ]),
+
     dbc.Row([
         dbc.Col([
             dcc.Checklist(id='year', value=[2020,2019,2018],

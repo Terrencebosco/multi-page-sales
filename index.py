@@ -15,7 +15,6 @@ import dash_bootstrap_components as dbc
 
 # pages from apps folder
 from apps import stateBreakdown
-from apps import test ###############
 from apps import yearly
 from apps import market_product
 
@@ -37,7 +36,7 @@ navbar = dbc.NavbarSimple(
                 dbc.DropdownMenuItem("More pages", header=True),
                 dbc.DropdownMenuItem("Yearly", href="/apps/yearly"),
                 dbc.DropdownMenuItem("State Breakdown", href="/apps/stateBreakdown"),
-                dbc.DropdownMenuItem("test", href="/apps/test"),
+                # dbc.DropdownMenuItem("test", href="/apps/test"),
                 dbc.DropdownMenuItem("market products", href="/apps/market_product")
             ],
             nav=True,
@@ -67,8 +66,6 @@ def display_page(pathname):
         return stateBreakdown.layout
     if pathname == '/apps/market_product':
         return market_product.layout
-    if pathname == '/apps/test': #############
-        return test.layout        #############
     else:
         return yearly.layout
 
@@ -76,11 +73,7 @@ def display_page(pathname):
 if __name__ == '__main__':
     app.run_server(host="0.0.0.0", port=port)
 
-
-# TODO:
-
-
-
 # make a home page dash board then other pages are more in depth
 # More analysis
 # figure out how to handle no selection for check box on yearly line plot
+# commented out the test and maybe the product page??

@@ -33,9 +33,17 @@ month_year_group = month_year_group.reindex(months, level='month_name').reset_in
 layout = dbc.Container([
     # header
     dbc.Row([
-            dbc.Col(html.H1("web application, sales by year",
+            dbc.Col(html.H1("Sales Breakdown by Year",
             style={'text-align':'center'},
-            className='mb-5'),width=12)
+            className='mb-5'),width=12),
+
+            dbc.Col(html.P('''
+            A breakdown of the yearly sales data for Company A. Select years to
+            be included in analysis. Breakdowns include yearly porgressions, earnings
+            per type of product sold, earnings by markets, and earnings by customer bases.
+            ''',
+            style={'text-align':'left'},
+            className='mb-5'),width=6)
     ]),
 
     # year vs year revenue over time
