@@ -78,7 +78,7 @@ pushing to heroku as follows:
 
     git push heroku main
 
-also created allies script to add commi and push to with git `git cmp "comment"`
+also created allies script to add commit and push to with git `git cmp "comment"`
 
 
 ```
